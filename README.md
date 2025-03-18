@@ -1,6 +1,7 @@
 # Economic Intelligence Agents
 
-> AI-driven financial assistant automating economic analysis and investment strategy using multi-agent orchestration.
+
+> Update: Model server is current down. I am working on integrating a different hugging face model due to licence issues.
 
 ## 🚀 Project Overview
 
