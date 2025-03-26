@@ -1,0 +1,7 @@
+crewai
+yfinance
+reportlab
+pandas
+requests
+tiktoken
+typing_extensions
