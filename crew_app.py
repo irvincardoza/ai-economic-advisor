@@ -1,20 +1,16 @@
 from crew import FinancialAdvisorCrew
-from utils.report_generator import generate_pdf_report
+from dotenv import load_dotenv
+load_dotenv()
 
 def main():
-    ticker = input("Enter stock ticker (default: AAPL): ").upper() or "AAPL"
-    crew = FinancialAdvisorCrew(ticker)
-    final_report = crew.run()
+    ticker = input("Enter stock ticker (default: AAPL): ") or "AAPL"
+    print(f"\n🚀 Running CrewAI for stock: {ticker}\n")
 
-    # Format sections into a dictionary (manual split)
-    sections = {
-        "📊 Investment Strategy": final_report[0],
-        "📈 Market Analysis": final_report[1],
-        "⚠️ Risk Assessment": final_report[2]
-    }
+    crew_instance = FinancialAdvisorCrew(ticker)
+    result = crew_instance.crew().kickoff()
 
-    pdf_path = generate_pdf_report(ticker, sections)
-    print(f"\n✅ PDF Report saved to: {pdf_path}")
+    print("\n📝 Final Investment Report:\n")
+    print(result)
 
 if __name__ == "__main__":
     main()

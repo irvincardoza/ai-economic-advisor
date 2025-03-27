@@ -1,0 +1,8 @@
+strategy_task:
+  description: Based on {ticker}'s performance, devise an investment strategy for 2025.
+  expected_output: A detailed strategy (buy/sell/hold) with reasoning.
+
+report_task:
+  description: Create a final summary report of the investment strategy for {ticker}.
+  expected_output: A one-page report outlining the strategy and its rationale.
+  output_file: reports/final_strategy_report.md

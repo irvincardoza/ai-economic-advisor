@@ -1,58 +1,50 @@
-from crewai import Agent, Crew, Task
-from agents.investment_strategy_agent import generate_investment_strategy
-from agents.market_analyst_agent import analyze_market_trend
-from agents.risk_management_agent import assess_risk
+from crewai import Crew, Task
+from agents.investment_strategy_agent import investment_strategy_agent
+from agents.market_analyst_agent import market_analyst_agent
+from agents.report_agent import report_agent
+from agents.risk_management_agent import risk_management_agent
+from utils.finance import fetch_trend, fetch_volatility
 
 class FinancialAdvisorCrew:
-    def __init__(self, ticker: str):
+    def __init__(self, ticker):
         self.ticker = ticker
-        self._build_crew()
+        self.trend = fetch_trend(ticker)
+        self.volatility = fetch_volatility(ticker)
 
-    def _build_crew(self):
-        self.investor = Agent(
-            role="Investment Strategist",
-            goal="Create a smart 2025 investment plan",
-            backstory="Experienced Wall Street strategist using live data.",
-            tools=[], verbose=True
+    def crew(self):
+        # Tasks
+        strategy_task = Task(
+            description=f"Based on {self.ticker}'s performance, devise an investment strategy for 2025.\nTrend: {self.trend}",
+            expected_output="A strategic investment recommendation for the next 12 months",
+            agent=investment_strategy_agent,
         )
 
-        self.analyst = Agent(
-            role="Market Analyst",
-            goal="Provide stock market trend insights",
-            backstory="Specialist in market momentum and forecasting.",
-            tools=[], verbose=True
+        analysis_task = Task(
+            description=f"Analyze recent market data for {self.ticker}.\nTrend: {self.trend}, Volatility: {self.volatility}",
+            expected_output="Key findings from market analysis and stock indicators",
+            agent=market_analyst_agent,
         )
 
-        self.risk_mgr = Agent(
-            role="Risk Manager",
-            goal="Assess risk and volatility of investment",
-            backstory="Financial risk expert evaluating stock behavior.",
-            tools=[], verbose=True
+        risk_task = Task(
+            description=f"Identify risks in investing in {self.ticker}.\nVolatility: {self.volatility}",
+            expected_output="Risk assessment report with suggested mitigations",
+            agent=risk_management_agent,
         )
 
-        self.task1 = Task(
-            description=f"Evaluate {self.ticker} and provide a long-term investment strategy.",
-            agent=self.investor,
-            expected_output=generate_investment_strategy(self.ticker)
+        report_task = Task(
+            description="Combine all insights and write a professional investment report.",
+            expected_output="A detailed, readable report summarizing strategy, analysis, and risk findings",
+            agent=report_agent,
         )
 
-        self.task2 = Task(
-            description=f"Analyze historical price trends for {self.ticker} and market indicators.",
-            agent=self.analyst,
-            expected_output=analyze_market_trend(self.ticker)
-        )
-
-        self.task3 = Task(
-            description=f"Assess risk exposure for {self.ticker} based on volatility.",
-            agent=self.risk_mgr,
-            expected_output=assess_risk(self.ticker)
-        )
-
-        self.crew = Crew(
-            agents=[self.investor, self.analyst, self.risk_mgr],
-            tasks=[self.task1, self.task2, self.task3],
+        # Crew setup
+        return Crew(
+            agents=[
+                investment_strategy_agent,
+                market_analyst_agent,
+                risk_management_agent,
+                report_agent,
+            ],
+            tasks=[strategy_task, analysis_task, risk_task, report_task],
             verbose=True
         )
-
-    def run(self):
-        return self.crew.run()
