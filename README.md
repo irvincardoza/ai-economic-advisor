@@ -25,6 +25,6 @@ This project is an **AI-powered financial assistant** that uses OpenAI’s GPT, 
 3. Each agent uses:
    - `yfinance` to pull live stock data
    - `OpenAI GPT-3.5` to generate expert-level text
-4. A structured **PDF report** is generated and saved in `/reports`.
+4. A structured, well organised **PDF report** is generated and saved in `/reports`.
 
 ---
